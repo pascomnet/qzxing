@@ -58,12 +58,10 @@ HEADERS += $$PWD/QZXing_global.h \
     $$PWD/zxing/zxing/common/GlobalHistogramBinarizer.h \
     $$PWD/zxing/zxing/common/DetectorResult.h \
     $$PWD/zxing/zxing/common/DecoderResult.h \
-    $$PWD/zxing/zxing/common/Counted.h \
     $$PWD/zxing/zxing/common/CharacterSetECI.h \
     $$PWD/zxing/zxing/common/BitSource.h \
     $$PWD/zxing/zxing/common/BitMatrix.h \
     $$PWD/zxing/zxing/common/BitArray.h \
-    $$PWD/zxing/zxing/common/Array.h \
     $$PWD/zxing/zxing/common/detector/MathUtils.h \
     $$PWD/zxing/zxing/common/detector/JavaMath.h \
     $$PWD/zxing/zxing/common/detector/WhiteRectangleDetector.h \
@@ -109,7 +107,6 @@ SOURCES += $$PWD/CameraImageWrapper.cpp \
     $$PWD/zxing/zxing/IllegalStateException.cpp \
     $$PWD/zxing/zxing/NotFoundException.cpp \
     $$PWD/zxing/zxing/WriterException.cpp \
-    $$PWD/zxing/zxing/common/Counted.cpp \
     $$PWD/zxing/zxing/common/StringUtils.cpp \
     $$PWD/zxing/zxing/common/Str.cpp \
     $$PWD/zxing/zxing/common/PerspectiveTransform.cpp \
@@ -412,11 +409,20 @@ qzxing_multimedia {
     DEFINES += QZXING_MULTIMEDIA
 	PRL_EXPORT_DEFINES += QZXING_MULTIMEDIA
 
-    HEADERS += \
-        $$PWD/QZXingFilter.h
+   lessThan(QT_VERSION, 6.2) {
+        HEADERS += \
+            $$PWD/QZXingFilter.h
 
+        SOURCES += \
+          $$PWD/QZXingFilter.cpp
+  }
+  greaterThan(QT_VERSION, 6.1) {
+    QT += concurrent
+    HEADERS += \
+        $$PWD/QZXingFilterVideoSink.h
     SOURCES += \
-        $$PWD/QZXingFilter.cpp
+        $$PWD/QZXingFilterVideoSink.cpp
+  }
 }
 
 qzxing_qml {
@@ -433,20 +439,7 @@ qzxing_qml {
         $$PWD/QZXingImageProvider.cpp
 }
 
-symbian {
-    TARGET.UID3 = 0xE618743C
-    TARGET.EPOCALLOWDLLDATA = 1
-
-    #TARGET.CAPABILITY = All -TCB -AllFiles -DRM
-    TARGET.CAPABILITY += NetworkServices \
-        ReadUserData \
-        WriteUserData \
-        LocalServices \
-        UserEnvironment \
-        Location
-}
-
-!symbian {
+unix {
     isEmpty(PREFIX) {
         maemo5 {
             PREFIX = /opt/usr
@@ -457,11 +450,16 @@ symbian {
 
     DEFINES += NOFMAXL
 
-	# Installation
-	headers.files = $$PWD/QZXing.h $$PWD/QZXing_global.h
-	headers.path = $$PREFIX/include
-	target.path = $$PREFIX/lib
-	INSTALLS += headers target
+    contains( CONFIG, sailfishapp) {
+        DEFINES += Q_OS_SAILFISH
+    } else {
+        # Installation
+        headers.files = $$PWD/QZXing.h $$PWD/QZXing_global.h
+        headers.path = $$PREFIX/include
+        target.path = $$PREFIX/lib
+        INSTALLS += headers target
+    }
+
 
 	# pkg-config support
 	CONFIG += create_pc create_prl no_install_prl
@@ -469,7 +467,7 @@ symbian {
 	QMAKE_PKGCONFIG_LIBDIR = $$PREFIX/lib
 	QMAKE_PKGCONFIG_INCDIR = $$PREFIX/include
 
-	unix:QMAKE_CLEAN += -r pkgconfig lib$${TARGET}.prl
+    unix:QMAKE_CLEAN += -r pkgconfig lib$${TARGET}.prl
 }
 
 win32-msvc*{
