@@ -26,3 +26,4 @@ debug/
 .idea
 .build
 .obj
+.vcsinfo
