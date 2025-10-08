@@ -27,11 +27,7 @@
 #endif // ENABLE_ENCODER_QR_CODE
 
 #ifdef QZXING_MULTIMEDIA
-#if QT_VERSION >= 0x060200
     #include "QZXingFilterVideoSink.h"
-#else
-    #include "QZXingFilter.h"
-#endif //QT_VERSION
 #endif //QZXING_MULTIMEDIA
 
 #ifdef QZXING_QML

@@ -402,27 +402,18 @@ enable_encoder_generic {
 }
 
 qzxing_multimedia {
-    QT += multimedia
+    QT += multimedia concurrent
 
     CONFIG += qzxing_qml
 
     DEFINES += QZXING_MULTIMEDIA
 	PRL_EXPORT_DEFINES += QZXING_MULTIMEDIA
 
-   lessThan(QT_VERSION, 6.2) {
-        HEADERS += \
-            $$PWD/QZXingFilter.h
-
-        SOURCES += \
-          $$PWD/QZXingFilter.cpp
-  }
-  greaterThan(QT_VERSION, 6.1) {
-    QT += concurrent
     HEADERS += \
         $$PWD/QZXingFilterVideoSink.h
+
     SOURCES += \
         $$PWD/QZXingFilterVideoSink.cpp
-  }
 }
 
 qzxing_qml {
