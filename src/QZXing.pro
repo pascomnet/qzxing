@@ -30,6 +30,10 @@ VERSION = 3.3
 TARGET = QZXing
 TEMPLATE = lib
 
+ios {
+    QMAKE_CXXFLAGS += -include arm_acle.h
+}
+
 include(QZXing-components.pri)
 
 DEFINES -= DISABLE_LIBRARY_FEATURES
